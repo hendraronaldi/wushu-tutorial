@@ -5,12 +5,12 @@
                 <div class="col">
                     <div class="card shadow">
                         <div class="card-header bg-transparent">
-                            <h3 class="mb-0">Chang Quan C</h3>
+                            <h3 class="mb-0">{{courseDetails.name.toUpperCase()}}</h3>
                         </div>
                         <div class="card-body">
                             <div class="row icon-examples">
                                 <div class="col-xl-12 col-lg-12"
-                                    v-for="(material, index) in materials" :key="material.title.value + index"
+                                    v-for="(material, index) in courseDetails.materials" :key="material.title.value + index"
                                 >
                                     <div v-if="index+1 == pagination.default">
                                         <div v-for="(item, idx) in material.content" :key="idx">
@@ -39,7 +39,7 @@
                                     </div>
                                 </div>
                                 <div>
-                                    <base-pagination :page-count="materials.length" v-model="pagination.default"></base-pagination>
+                                    <base-pagination :page-count="courseDetails.materials.length" v-model="pagination.default"></base-pagination>
                                 </div>
                             </div>
                         </div>
@@ -59,76 +59,46 @@ import BTooltipDirective from 'bootstrap-vue/es/directives/tooltip'
   Vue.use(VueClipboard)
   export default {
     name: 'course-details',
+
     props: {
+        level: String,
+        category: String,
         course: String
     },
+
     directives: {
       'b-tooltip': BTooltipDirective
     },
+
+    created(){
+        this.loadCourseDetails();
+    },
+
     data() {
         return {
             pagination: {
                 default: 1
             },
             answers: [],
-            materials: [
-                {
-                    content: [
-                        {
-                            title: "Chang Quan C Demo",
-                            type: "video",
-                            value: "https://www.youtube.com/embed/9Xy6KUnZdJI"
-                        },
-                        {
-                            type: "text",
-                            value: "text"
+            courseDetails: {
+                id: '',
+                name: "",
+                materials: [
+                    {
+                        content: [
+                            {
+                                type: 'text',
+                                value: ''
+                            }
+                        ],
+
+                        title: {
+                            type: 'text',
+                            value: ''
                         }
-                    ],
-                    title: {
-                        type: "text",
-                        value: "Chang Quan C"
                     }
-                },
-                {
-                    content: [
-                        {
-                            title: "Chang Quan C Quiz",
-                            type: "form",
-                            value: [
-                                {
-                                    answer: "2",
-                                    choices: [
-                                        {
-                                            type: "text",
-                                            value: "choice 1"
-                                        },
-                                        {
-                                            type: "text",
-                                            value: "choice 2"
-                                        },
-                                        {
-                                            type: "text",
-                                            value: "choice 3"
-                                        },
-                                        {
-                                            type: "text",
-                                            value: "choice 4"
-                                        }
-                                    ],
-                                    image: "url image",
-                                    question: "Question 1"
-                                }
-                            ]
-                        }
-                    ],
-                    title: {
-                        type: "text",
-                        value: "Quiz"
-                    }
-                }
-            ],
-            name: "Chang Quan C",
-            id: "changquanc"
+                ]
+            },
         }
     },
     computed: {
@@ -149,6 +119,34 @@ import BTooltipDirective from 'bootstrap-vue/es/directives/tooltip'
                 this.$notify({
                     type: 'success',
                     title: 'Copied to clipboard'
+                })
+            },
+
+            loadCourseDetails(dispatch) {
+                dispatch('getCourseDetails', this.category+ "/" + this.level + "/" + this.course)
+                .then((response) => {
+                    this.courseDetails = response;
+                })
+                .catch(() => {
+                    this.courseDetails = {
+                        id: '',
+                        name: "",
+                        materials: [
+                            {
+                                content: [
+                                    {
+                                        type: 'text',
+                                        value: ''
+                                    }
+                                ],
+
+                                title: {
+                                    type: 'text',
+                                    value: ''
+                                }
+                            }
+                        ]
+                    };
                 })
             }
         }

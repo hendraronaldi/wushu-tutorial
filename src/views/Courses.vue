@@ -8,14 +8,14 @@
                 <div class="col">
                     <div class="card shadow">
                         <div class="card-header bg-transparent">
-                            <h3 class="mb-0">Courses</h3>
+                            <h3 class="mb-0">COURSES</h3>
                         </div>
                         <div class="card-body">
                             <div class="row icon-examples">
                                 <div class="col-xl-4 col-lg-6"
-                                    v-for="(course, index) in courses" :key="course.name + index"
+                                    v-for="(course, index) in courses" :key="course.class + index"
                                 >
-                                    <stats-card :sub-title="course.name"
+                                    <stats-card :sub-title="course.class"
                                                 type="gradient-success"
                                                 icon="ni ni-hat-3"
                                                 class="mb-4 mb-xl-0"
@@ -24,14 +24,14 @@
                                             slot="footer"
                                             v-for="(item, index) in course.category"
                                         >
-                                            <button  :key="item.name + index"
+                                            <button  :key="item.title + index"
                                                     type="button"
-                                                    @click="toggleCategory"
+                                                    @click="toggleCategory(course.class.toLowerCase(), item.title.toLowerCase())"
                                                     v-b-tooltip.hover.top
                                                     class="btn-icon-clipboard" data-clipboard-text="air-baloon">
                                                 <div>
                                                     <i class="ni ni-hat-3"></i>
-                                                    <span>{{item.name}}</span>
+                                                    <span>{{item.title}}</span>
                                                     <span>{{item.description}}</span>
                                                 </div>
                                             </button>
@@ -44,12 +44,16 @@
                 </div>
             </div>
         </div>
-        <course-category v-else></course-category>
+        <course-category
+            v-else
+            :category="category"
+            :level="level"
+        ></course-category>
     </div>
 </template>
 <script>
 import Vue from 'vue'
-import {mapActions, mapGetters, mapState} from 'vuex';
+import {mapActions} from 'vuex';
 import VueClipboard from 'vue-clipboard2'
 import BTooltipDirective from 'bootstrap-vue/es/directives/tooltip'
 import CourseCategory from './courses/CourseCategory.vue'
@@ -60,92 +64,20 @@ import CourseCategory from './courses/CourseCategory.vue'
         CourseCategory
     },
 
+    created(){
+        this.loadCourseCategory()
+    },
+
     directives: {
       'b-tooltip': BTooltipDirective
     },
+
     data() {
       return {
         clickedCategory: false,
-        courses: [
-            {
-                color: 'gradient-red',
-                name: 'Taolu',
-                category: [
-                    {
-                        name: 'D',
-                        description: 'Age 6 - 8'
-                    },
-                    {
-                        name: 'C',
-                        description: 'Age 9 - 12'
-                    },
-                    {
-                        name: 'B',
-                        description: 'Age 13 - 15'
-                    },
-                    {
-                        name: 'A',
-                        description: 'Age 16 - 18'
-                    },
-                    {
-                        name: 'Senior',
-                        description: 'Age 18 - above'
-                    }
-                ]
-            },
-            {
-                color: 'gradient-green',
-                name: 'Traditional',
-                category: [
-                    {
-                        name: 'D',
-                        description: 'Age 6 - 8'
-                    },
-                    {
-                        name: 'C',
-                        description: 'Age 9 - 12'
-                    },
-                    {
-                        name: 'B',
-                        description: 'Age 13 - 15'
-                    },
-                    {
-                        name: 'A',
-                        description: 'Age 16 - 18'
-                    },
-                    {
-                        name: 'Senior',
-                        description: 'Age 18 - above'
-                    }
-                ]
-            },
-            {
-                color: 'gradient-blue',
-                name: 'Sanda',
-                category: [
-                    {
-                        name: 'D',
-                        description: 'Age 6 - 8'
-                    },
-                    {
-                        name: 'C',
-                        description: 'Age 9 - 12'
-                    },
-                    {
-                        name: 'B',
-                        description: 'Age 13 - 15'
-                    },
-                    {
-                        name: 'A',
-                        description: 'Age 16 - 18'
-                    },
-                    {
-                        name: 'Senior',
-                        description: 'Age 18 - above'
-                    }
-                ]
-            }
-        ]
+        courses: [],
+        category: "",
+        level: ""
       }
     },
     methods: mapActions(
@@ -156,8 +88,21 @@ import CourseCategory from './courses/CourseCategory.vue'
                     title: 'Copied to clipboard'
                 })
             },
-            toggleCategory() {
+
+            toggleCategory(dispatch, category, level) {
+                this.category = category;
+                this.level = level;
                 this.clickedCategory = true;
+            },
+
+            loadCourseCategory(dispatch) {
+                dispatch('getCourses')
+                .then((response) => {
+                    this.courses = response;
+                })
+                .catch(() => {
+                    this.courses = [];
+                })
             }
         }
     )
