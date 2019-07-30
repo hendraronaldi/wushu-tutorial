@@ -1,9 +1,6 @@
 <template>
     <div>
-        <base-header type="gradient-dark" class="pb-6 pb-8 pt-5 pt-md-8">
-        </base-header>
-
-        <div class="container-fluid mt--7">
+        <div  v-if="!clickedDetails" class="container-fluid mt--7">
             <div class="row">
                 <div class="col">
                     <div class="card shadow">
@@ -22,6 +19,7 @@
                                         <template slot="footer">
                                             <p>{{course.description}}</p>
                                             <button type="button"
+                                                    @click="toggleDetails"
                                                     v-b-tooltip.hover.top
                                                     class="btn-icon-clipboard" data-clipboard-text="air-baloon">
                                                 <div>
@@ -38,20 +36,33 @@
                 </div>
             </div>
         </div>
-
+        <course-details v-else></course-details>
     </div>
 </template>
 <script>
-  import Vue from 'vue'
-  import VueClipboard from 'vue-clipboard2'
-  import BTooltipDirective from 'bootstrap-vue/es/directives/tooltip'
+import Vue from 'vue'
+import {mapActions, mapGetters, mapState} from 'vuex';
+import VueClipboard from 'vue-clipboard2'
+import BTooltipDirective from 'bootstrap-vue/es/directives/tooltip'
+import CourseDetails from './CourseDetails.vue'
+
   Vue.use(VueClipboard)
   export default {
+    name: 'course-category',
+    components: {
+        CourseDetails
+    },
+    props: {
+        level: String,
+        category: String
+    },
+
     directives: {
       'b-tooltip': BTooltipDirective
     },
     data() {
       return {
+        clickedDetails: false,
         courses: [
             {
                 id: 'changquanc',
@@ -66,14 +77,29 @@
         ]
       }
     },
-    methods: {
-      onCopy() {
-        this.$notify({
-          type: 'success',
-          title: 'Copied to clipboard'
-        })
-      }
-    }
+    computed: {
+        ...mapGetters([
+            'currentCategory',
+            'currentLevel'
+        ]),
+        ...mapState([
+            'currentCategory',
+            'currentLevel'
+        ])
+    },
+    methods: mapActions(
+        {
+            onCopy() {
+                this.$notify({
+                    type: 'success',
+                    title: 'Copied to clipboard'
+                })
+            },
+            toggleDetails() {
+                this.clickedDetails = true;
+            }
+        }
+    )
   };
 </script>
 <style></style>
