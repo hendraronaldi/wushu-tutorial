@@ -29,10 +29,10 @@
                             <h6 class="text-overflow m-0">Welcome!</h6>
                         </div>
                         <div class="dropdown-divider"></div>
-                        <router-link to="/" class="dropdown-item">
+                        <button @click="adminLogout" class="dropdown-item">
                             <i class="ni ni-user-run"></i>
                             <span>Logout</span>
-                        </router-link>
+                        </button>
                     </template>
                 </base-dropdown>
             </li>
@@ -40,6 +40,7 @@
     </base-nav>
 </template>
 <script>
+import {mapActions} from 'vuex';
   export default {
     data() {
       return {
@@ -53,36 +54,38 @@
       loggedAs: String,
     },
 
-    methods: {
-      toggleSidebar() {
-        this.$sidebar.displaySidebar(!this.$sidebar.showSidebar);
-      },
-      hideSidebar() {
-        this.$sidebar.displaySidebar(false);
-      },
-      toggleMenu() {
-        this.showMenu = !this.showMenu;
-      },
-      adminLogout(dispatch){
-        const {admin} = this.$store.state;
-        // this.isFetching = true;
-        dispatch('adminLogout', {admin})
-        .then((response) => {
-          this.$router.push("/")
-        })
-        .catch(error => {
-          // this.fail = true;
-        })
-        .finally(() => {
-          // if(this.fail) {
-          //   setTimeout(function(){
-          //     this.fail = false;
-          //   }, 3000);
-          // }
+    methods: mapActions(
+      {
+        toggleSidebar(dispatch) {
+          this.$sidebar.displaySidebar(!this.$sidebar.showSidebar);
+        },
+        hideSidebar(dispatch) {
+          this.$sidebar.displaySidebar(false);
+        },
+        toggleMenu(dispatch) {
+          this.showMenu = !this.showMenu;
+        },
+        adminLogout(dispatch){
+          const {admin} = this.$store.state;
+          // this.isFetching = true;
+          dispatch('adminLogout', {admin})
+          .then((response) => {
+            this.$router.push("/")
+          })
+          .catch(error => {
+            // this.fail = true;
+          })
+          .finally(() => {
+            // if(this.fail) {
+            //   setTimeout(function(){
+            //     this.fail = false;
+            //   }, 3000);
+            // }
 
-          // this.isFetching = false;
-        })
+            // this.isFetching = false;
+          })
+        }
       }
-    }
+    )
   };
 </script>
