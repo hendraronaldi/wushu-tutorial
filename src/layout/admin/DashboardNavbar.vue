@@ -20,7 +20,7 @@
                   <img alt="Image placeholder" src="img/theme/team-4-800x800.jpg">
                 </span>
                         <div class="media-body ml-2 d-none d-lg-block">
-                            <span class="mb-0 text-sm  font-weight-bold">Jessica Jones</span>
+                            <span class="mb-0 text-sm  font-weight-bold">{{loggedAs}}</span>
                         </div>
                     </div>
 
@@ -28,24 +28,8 @@
                         <div class=" dropdown-header noti-title">
                             <h6 class="text-overflow m-0">Welcome!</h6>
                         </div>
-                        <router-link to="/profile" class="dropdown-item">
-                            <i class="ni ni-single-02"></i>
-                            <span>My profile</span>
-                        </router-link>
-                        <router-link to="/profile" class="dropdown-item">
-                            <i class="ni ni-settings-gear-65"></i>
-                            <span>Settings</span>
-                        </router-link>
-                        <router-link to="/profile" class="dropdown-item">
-                            <i class="ni ni-calendar-grid-58"></i>
-                            <span>Activity</span>
-                        </router-link>
-                        <router-link to="/profile" class="dropdown-item">
-                            <i class="ni ni-support-16"></i>
-                            <span>Support</span>
-                        </router-link>
                         <div class="dropdown-divider"></div>
-                        <router-link to="/profile" class="dropdown-item">
+                        <router-link to="/" class="dropdown-item">
                             <i class="ni ni-user-run"></i>
                             <span>Logout</span>
                         </router-link>
@@ -64,6 +48,11 @@
         searchQuery: ''
       };
     },
+
+    props:{
+      loggedAs: String,
+    },
+
     methods: {
       toggleSidebar() {
         this.$sidebar.displaySidebar(!this.$sidebar.showSidebar);
@@ -73,6 +62,26 @@
       },
       toggleMenu() {
         this.showMenu = !this.showMenu;
+      },
+      adminLogout(dispatch){
+        const {admin} = this.$store.state;
+        // this.isFetching = true;
+        dispatch('adminLogout', {admin})
+        .then((response) => {
+          this.$router.push("/")
+        })
+        .catch(error => {
+          // this.fail = true;
+        })
+        .finally(() => {
+          // if(this.fail) {
+          //   setTimeout(function(){
+          //     this.fail = false;
+          //   }, 3000);
+          // }
+
+          // this.isFetching = false;
+        })
       }
     }
   };

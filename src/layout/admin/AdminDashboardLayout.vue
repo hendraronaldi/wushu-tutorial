@@ -1,6 +1,7 @@
 <template>
   <div class="wrapper" :class="{ 'nav-open': $sidebar.showSidebar }">
     <side-bar
+      :loggedAs="loggedAs"
       :background-color="sidebarBackground"
       short-title="Argon"
       title="Argon"
@@ -13,7 +14,9 @@
       </template>
     </side-bar>
     <div class="main-content" :data="sidebarBackground">
-      <dashboard-navbar></dashboard-navbar>
+      <dashboard-navbar
+        :loggedAs="loggedAs"
+      ></dashboard-navbar>
 
       <div @click="toggleSidebar">
         <fade-transition :duration="200" origin="center top" mode="out-in">
@@ -38,6 +41,7 @@
     },
     data() {
       return {
+        loggedAs: 'Admin',
         sidebarBackground: 'vue' //vue|blue|orange|green|red|primary
       };
     },

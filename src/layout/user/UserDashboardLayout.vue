@@ -1,6 +1,7 @@
 <template>
   <div class="wrapper" :class="{ 'nav-open': $sidebar.showSidebar }">
     <side-bar
+      :loggedAs="loggedAs"
       :background-color="sidebarBackground"
       short-title="Argon"
       title="Argon"
@@ -13,7 +14,9 @@
       </template>
     </side-bar>
     <div class="main-content" :data="sidebarBackground">
-      <dashboard-navbar></dashboard-navbar>
+      <dashboard-navbar
+        :loggedAs="loggedAs"
+      ></dashboard-navbar>
 
       <div @click="toggleSidebar">
         <fade-transition :duration="200" origin="center top" mode="out-in">
@@ -26,6 +29,7 @@
   </div>
 </template>
 <script>
+  import {mapGetters, mapState} from 'vuex';
   import DashboardNavbar from './DashboardNavbar.vue';
   import ContentFooter from './ContentFooter.vue';
   import { FadeTransition } from 'vue2-transitions';
@@ -38,8 +42,17 @@
     },
     data() {
       return {
+        loggedAs: this.$store.state.userProfile.Name,
         sidebarBackground: 'vue' //vue|blue|orange|green|red|primary
       };
+    },
+    computed: {
+      ...mapGetters([
+        'currentUser'
+      ]),
+      ...mapState([
+        'userProfile'
+      ])
     },
     methods: {
       toggleSidebar() {
