@@ -1,92 +1,227 @@
 <template>
-    <div class="row justify-content-center">
-        <div class="col-lg-5 col-md-7">
-            <div class="card bg-secondary shadow border-0">
-                <div class="card-header bg-transparent pb-5">
-                    <div class="text-muted text-center mt-2 mb-3">
-                        <small>Sign up with</small>
-                    </div>
-                    <div class="btn-wrapper text-center">
-                        <a href="#" class="btn btn-neutral btn-icon">
-                            <span class="btn-inner--icon"><img src="img/icons/common/github.svg"></span>
-                            <span class="btn-inner--text">Github</span>
-                        </a>
-                        <a href="#" class="btn btn-neutral btn-icon">
-                            <span class="btn-inner--icon"><img src="img/icons/common/google.svg"></span>
-                            <span class="btn-inner--text">Google</span>
-                        </a>
-                    </div>
-                </div>
-                <div class="card-body px-lg-5 py-lg-5">
-                    <div class="text-center text-muted mb-4">
-                        <small>Or sign up with credentials</small>
-                    </div>
-                    <form role="form">
+    <section class="section section-shaped section-lg my-0">
+        <div class="shape shape-style-1 shape-default shape-skew"
+            style="background:black;"
+        >
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
 
-                        <base-input class="input-group-alternative mb-3"
-                                    placeholder="Name"
-                                    addon-left-icon="ni ni-hat-3"
-                                    v-model="model.name">
-                        </base-input>
-
-                        <base-input class="input-group-alternative mb-3"
-                                    placeholder="Email"
-                                    addon-left-icon="ni ni-email-83"
-                                    v-model="model.email">
-                        </base-input>
-
-                        <base-input class="input-group-alternative"
-                                    placeholder="Password"
-                                    type="password"
-                                    addon-left-icon="ni ni-lock-circle-open"
-                                    v-model="model.password">
-                        </base-input>
-
-                        <div class="text-muted font-italic">
-                            <small>password strength: <span class="text-success font-weight-700">strong</span></small>
-                        </div>
-
-                        <div class="row my-4">
-                            <div class="col-12">
-                                <base-checkbox class="custom-control-alternative">
-                                    <span class="text-muted">I agree with the <a href="#!">Privacy Policy</a></span>
-                                </base-checkbox>
-                            </div>
-                        </div>
-                        <div class="text-center">
-                            <base-button type="primary" class="my-4">Create account</base-button>
-                        </div>
-                    </form>
-                </div>
+        <template>
+            <div v-if="fail" class="alert alert-danger fade show" role="alert">
+                User existed already, please change your username
             </div>
-            <div class="row mt-3">
-                <div class="col-6">
-                    <a href="#" class="text-light">
-                        <small>Forgot password?</small>
-                    </a>
-                </div>
-                <div class="col-6 text-right">
-                    <router-link to="/login" class="text-light">
-                        <small>Login into your account</small>
-                    </router-link>
+            <div v-else></div>
+        </template>
+
+        <div class="container pt-lg-md">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <card type="secondary" shadow
+                          header-classes="bg-white pb-5"
+                          body-classes="px-lg-5 py-lg-5"
+                          class="border-0">
+                        <template>
+                            <div class="text-center text-muted mb-4">
+                                <small>Sign Up</small>
+                            </div>
+                            <form role="form" @submit="register">
+                                <div class="form-group mb-3 input-group input-group-alternative">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">
+                                            <i class="ni ni-circle-08"></i>
+                                        </span>
+                                    </div>
+                                    <input v-model="user.name" aria-describedby="addon-right addon-left" placeholder="Name" class="form-control" required>
+                                </div>
+                                <div class="form-group mb-3 input-group input-group-alternative">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">
+                                            <i class="ni ni-single-02"></i>
+                                        </span>
+                                    </div>
+                                    <input v-model="user.username" aria-describedby="addon-right addon-left" placeholder="Username" class="form-control" required>
+                                </div>
+                                <div class="form-group mb-3 input-group input-group-alternative">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">
+                                        <i class="ni ni-email-83"></i>
+                                    </span>
+                                </div>
+                                <input v-model="user.email" aria-describedby="addon-right addon-left" placeholder="Email" class="form-control" required>
+                                </div>
+                                <div class="form-group input-group input-group-alternative">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">
+                                            <i class="ni ni-lock-circle-open"></i>
+                                        </span>
+                                    </div>
+                                    <input v-model="user.password" aria-describedby="addon-right addon-left" type="password" placeholder="Password" class="form-control" required>
+                                </div>
+                                <label>Birthdate</label>
+                                <base-input alternative addon-left-icon="ni ni-calendar-grid-58">
+                                    <flat-picker slot-scope="{focus, blur}"
+                                                @on-open="focus"
+                                                @on-close="blur"
+                                                :config="{allowInput: true}"
+                                                class="form-control datepicker"
+                                                v-model="user.birthdate">
+                                    </flat-picker>
+                                </base-input>
+                                <div class="form-group mb-3 input-group input-group-alternative">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">
+                                            <i class="ni ni-pin-3"></i>
+                                        </span>
+                                    </div>
+                                    <input v-model="user.birthplace" aria-describedby="addon-right addon-left" placeholder="Birthplace" class="form-control" required>
+                                </div>
+                                <div class="form-group mb-3 input-group input-group-alternative">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">
+                                            <i class="ni ni-mobile-button"></i>
+                                        </span>
+                                    </div>
+                                    <input v-model="user.phone" aria-describedby="addon-right addon-left" placeholder="Phone" class="form-control" required>
+                                </div>
+                                <div class="form-group mb-3 input-group input-group-alternative">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">
+                                            <i class="ni ni-map-big"></i>
+                                        </span>
+                                    </div>
+                                    <input v-model="user.address" aria-describedby="addon-right addon-left" placeholder="Address" class="form-control" required>
+                                </div>
+                                <div class="form-group mb-3 input-group input-group-alternative">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">
+                                            <i class="ni ni-hat-3"></i>
+                                        </span>
+                                    </div>
+                                    <input v-model="user.education" aria-describedby="addon-right addon-left" placeholder="Education" class="form-control" required>
+                                </div>
+                                <div class="form-group mb-3 input-group input-group-alternative">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">
+                                            <i class="ni ni-trophy"></i>
+                                        </span>
+                                    </div>
+                                    <input v-model="user.expprev" aria-describedby="addon-right addon-left" placeholder="Experience" class="form-control">
+                                </div>
+                                <div class="form-group mb-3 input-group input-group-alternative">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">
+                                            <i class="ni ni-favourite-28"></i>
+                                        </span>
+                                    </div>
+                                    <input v-model="user.motivation" aria-describedby="addon-right addon-left" placeholder="Motivation" class="form-control">
+                                </div>
+                                <div class="form-group mb-3 input-group input-group-alternative">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">
+                                            <i class="ni ni-circle-08"></i>
+                                        </span>
+                                    </div>
+                                    <input v-model="user.nameparent" aria-describedby="addon-right addon-left" placeholder="Parent's Name" class="form-control" required>
+                                </div>
+                                <div class="form-group mb-3 input-group input-group-alternative">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">
+                                            <i class="ni ni-mobile-button"></i>
+                                        </span>
+                                    </div>
+                                    <input v-model="user.phoneparent" aria-describedby="addon-right addon-left" placeholder="Parent's Phone" class="form-control" required>
+                                </div>
+                                <div class="form-group mb-3 input-group input-group-alternative">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">
+                                            <i class="ni ni-map-big"></i>
+                                        </span>
+                                    </div>
+                                    <input v-model="user.addressparent" aria-describedby="addon-right addon-left" placeholder="Parent's Address" class="form-control" required>
+                                </div>
+                                <div class="text-center">
+                                    <button v-if="!isFetching" type="submit" class="btn my-4 btn-primary"
+                                        style="background:grey; border-color:grey;"
+                                    >Create Account Request</button>
+                                    <button v-else type="button" class="btn my-4 btn-primary"
+                                        style="background:grey; border-color:grey;"
+                                        disabled
+                                    >Please wait a minute</button>
+                                </div>
+                            </form>
+                        </template>
+                    </card>
                 </div>
             </div>
         </div>
-    </div>
+    </section>
 </template>
 <script>
-  export default {
-    name: 'register',
+import {mapActions} from 'vuex';
+import flatPicker from "vue-flatpickr-component";
+import "flatpickr/dist/flatpickr.css";
+import { constants } from 'crypto';
+
+export default {
+    components: {flatPicker},
     data() {
-      return {
-        model: {
-          name: '',
-          email: '',
-          password: ''
+        return {
+            user: {
+                name: "",
+                username: "",
+                email: "",
+                password: "",
+                birthdate: "2019-07-17",
+                birthplace: "",
+                phone: "",
+                education: "",
+                expprev: "",
+                motivation: "",
+                nameparent: "",
+                phoneparent: "",
+                addressparent: "",
+                status: 0
+            },
+            isFetching: false,
+            fail: false
+        };
+    },
+    methods: mapActions({
+        register(dispatch, e){
+            e.preventDefault();
+            const {user} = this;
+            this.isFetching = true;
+            dispatch('register', {user})
+            .then((response) => {
+                alert("Success! New user created")
+                this.$router.push("/profile")
+            })
+            .catch(error => {
+                this.fail = true;
+            })
+            .finally(() => {
+                if(this.fail) {
+                    setTimeout(function(){
+                        this.fail = false;
+                    }, 3000);
+                }
+
+                this.isFetching = false;
+            })
         }
-      }
-    }
-  }
+    })
+};
 </script>
 <style>
 </style>
