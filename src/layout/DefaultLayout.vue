@@ -2,7 +2,7 @@
     <div class="main-content">
         <header class="header-global">
             <base-nav class="navbar-top navbar-horizontal navbar-dark" containerClasses="px-4 container" effect="light" expand>
-                <router-link slot="brand" class="navbar-brand" to="/landing">
+                <router-link slot="brand" class="navbar-brand" to="/">
                     <i class="fa fa-home"></i>
                     <span>Home</span>
                 </router-link>
