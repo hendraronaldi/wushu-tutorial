@@ -2,15 +2,21 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import DashboardLayout from '@/layout/DashboardLayout'
 import DefaultLayout from '@/layout/DefaultLayout' 
+
+import store from './store';
+
 Vue.use(Router)
 
-export default new Router({
+const router = new Router({
   linkExactActiveClass: 'active',
   routes: [
     {
-      path: '/',
+      path: '/dashboard',
       redirect: 'dashboard',
       component: DashboardLayout,
+      meta: {
+        onlyUser: true
+      },
       children: [
         {
           path: '/dashboard',
@@ -28,7 +34,7 @@ export default new Router({
         {
           path: '/profile',
           name: 'profile',
-          component: () => import(/* webpackChunkName: "demo" */ './views/UserProfile.vue')
+          component: () => import(/* webpackChunkName: "demo" */ './views/Profile.vue')
         },
         {
           path: '/maps',
@@ -49,11 +55,10 @@ export default new Router({
     },
     {
       path: '/',
-      redirect: 'landing',
       component: DefaultLayout,
       children: [
         {
-          path: '/landing',
+          path: '/',
           name: 'landing',
           component: () => import(/* webpackChunkName: "demo" */ './views/Landing.vue')
         },
@@ -73,6 +78,47 @@ export default new Router({
           component: () => import(/* webpackChunkName: "demo" */ './views/admin/Login.vue')
         }
       ]
+    },
+    {
+      path: '/admin-confirmation',
+      redirect: 'admin-confirmation',
+      component: DashboardLayout,
+      meta: {
+        onlyAdmin: true
+      },
+      children: [
+        {
+          path: '/admin-confirmation',
+          name: 'admin-confirmation',
+          // route level code-splitting
+          // this generates a separate chunk (about.[hash].js) for this route
+          // which is lazy-loaded when the route is visited.
+          component: () => import(/* webpackChunkName: "demo" */ './views/admin/Confirmation.vue')
+        }
+      ]
     }
   ]
 })
+
+router.beforeEach((to, from, next) => {
+  const userAuthed = store.state.userProfile ? true : false;
+  const adminAuthed = store.state.admin ? true : false;
+  const onlyUser = to.matched.some(record => record.meta.onlyUser);
+  const onlyAdmin = to.matched.some(record => record.meta.onlyAdmin);
+
+  if(onlyUser && !userAuthed) {
+    return next({
+      path: '/login'
+    })
+  }
+
+  if(onlyAdmin && !adminAuthed) {
+    return next({
+      path: '/admin-login'
+    })
+  }
+
+  next()
+})
+
+export default router;
