@@ -25,7 +25,37 @@
                             </div>
                         </div>
                     </div>
-                    <ul class="navbar-nav ml-auto">
+                    <ul v-if="userProfile" class="navbar-nav ml-auto">
+                        <li class="nav-item">
+                            <a class="nav-link nav-link-icon" href="https://www.instagram.com/wushuterataiputih/"
+                            target="_blank" rel="noopener" data-toggle="tooltip" title="Follow us on Instagram">
+                                <i class="fa fa-instagram"></i>
+                                <span class="nav-link-inner--text d-lg-none">Instagram</span>
+                            </a>
+                        </li>
+                        <li class="nav-item d-lg-block ml-lg-4">
+                            <router-link class="nav-link nav-link-icon" to="/profile">
+                                <i class="ni ni-circle-08"></i>
+                                <span class="nav-link-inner--text">Profile</span>
+                            </router-link>
+                        </li>
+                    </ul>
+                    <ul v-else-if="admin" class="navbar-nav ml-auto">
+                        <li class="nav-item">
+                            <a class="nav-link nav-link-icon" href="https://www.instagram.com/wushuterataiputih/"
+                            target="_blank" rel="noopener" data-toggle="tooltip" title="Follow us on Instagram">
+                                <i class="fa fa-instagram"></i>
+                                <span class="nav-link-inner--text d-lg-none">Instagram</span>
+                            </a>
+                        </li>
+                        <li class="nav-item d-lg-block ml-lg-4">
+                            <router-link class="nav-link nav-link-icon" to="/admin-confirmation">
+                                <i class="ni ni-circle-08"></i>
+                                <span class="nav-link-inner--text">Admin</span>
+                            </router-link>
+                        </li>
+                    </ul>
+                    <ul v-else class="navbar-nav ml-auto">
                         <li class="nav-item">
                             <a class="nav-link nav-link-icon" href="https://www.instagram.com/wushuterataiputih/"
                             target="_blank" rel="noopener" data-toggle="tooltip" title="Follow us on Instagram">
@@ -77,6 +107,7 @@
     </div>
 </template>
 <script>
+import {mapGetters, mapState} from "vuex";
 import BaseNav from "@/components/BaseNav";
 import BaseDropdown from "@/components/BaseDropdown";
 import CloseButton from "@/components/CloseButton";
@@ -89,6 +120,17 @@ export default {
     BaseDropdown,
     SlideYUpTransition
   },
+  computed: {
+        ...mapGetters([
+            'currentUser',
+            'currentAdmin'
+
+        ]),
+        ...mapState([
+            'userProfile',
+            'admin'
+        ])
+    },
   data() {
     return {
       year: new Date().getFullYear(),
