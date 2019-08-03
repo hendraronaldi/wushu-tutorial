@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import DashboardLayout from '@/layout/DashboardLayout'
+import UserDashboardLayout from '@/layout/user/UserDashboardLayout'
+import AdminDashboardLayout from '@/layout/admin/AdminDashboardLayout'
 import DefaultLayout from '@/layout/DefaultLayout' 
 
 import store from './store';
@@ -13,7 +14,7 @@ const router = new Router({
     {
       path: '/dashboard',
       redirect: 'dashboard',
-      component: DashboardLayout,
+      component: UserDashboardLayout,
       meta: {
         onlyUser: true
       },
@@ -82,7 +83,7 @@ const router = new Router({
     {
       path: '/admin-confirmation',
       redirect: 'admin-confirmation',
-      component: DashboardLayout,
+      component: AdminDashboardLayout,
       meta: {
         onlyAdmin: true
       },
