@@ -8,7 +8,6 @@
                 <base-input placeholder="Search"
                             class="input-group-alternative"
                             alternative=""
-                            addon-right-icon="fas fa-search">
                 </base-input>
             </div>
         </form>
