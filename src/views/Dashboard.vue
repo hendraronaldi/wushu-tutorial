@@ -1,61 +1,23 @@
 <template>
     <div>
-        <base-header type="gradient-success" class="pb-6 pb-8 pt-5 pt-md-8">
+        <base-header type="gradient-dark" class="pb-6 pb-8 pt-5 pt-md-8">
             <!-- Card stats -->
             <div class="row">
-                <div class="col-xl-3 col-lg-6">
-                    <stats-card title="Total traffic"
-                                type="gradient-red"
-                                sub-title="350,897"
-                                icon="ni ni-active-40"
+                <div :key="index" v-for="(item, index) in performance.latest.datasets.rank" class="col-xl-3 col-lg-6 mb-3 mb-xl-5">
+                    <stats-card :title="item.label"
+                                :type="item.color"
+                                :sub-title="item.data[item.data.length - 1].toString()"
+                                :icon="item.icon"
                                 class="mb-4 mb-xl-0"
                     >
 
                         <template slot="footer">
-                            <span class="text-success mr-2"><i class="fa fa-arrow-up"></i> 3.48%</span>
-                            <span class="text-nowrap">Since last month</span>
-                        </template>
-                    </stats-card>
-                </div>
-                <div class="col-xl-3 col-lg-6">
-                    <stats-card title="Total traffic"
-                                type="gradient-orange"
-                                sub-title="2,356"
-                                icon="ni ni-chart-pie-35"
-                                class="mb-4 mb-xl-0"
-                    >
-
-                        <template slot="footer">
-                            <span class="text-success mr-2"><i class="fa fa-arrow-up"></i> 12.18%</span>
-                            <span class="text-nowrap">Since last month</span>
-                        </template>
-                    </stats-card>
-                </div>
-                <div class="col-xl-3 col-lg-6">
-                    <stats-card title="Sales"
-                                type="gradient-green"
-                                sub-title="924"
-                                icon="ni ni-money-coins"
-                                class="mb-4 mb-xl-0"
-                    >
-
-                        <template slot="footer">
-                            <span class="text-danger mr-2"><i class="fa fa-arrow-down"></i> 5.72%</span>
-                            <span class="text-nowrap">Since last month</span>
-                        </template>
-                    </stats-card>
-
-                </div>
-                <div class="col-xl-3 col-lg-6">
-                    <stats-card title="Performance"
-                                type="gradient-info"
-                                sub-title="49,65%"
-                                icon="ni ni-chart-bar-32"
-                                class="mb-4 mb-xl-0"
-                    >
-
-                        <template slot="footer">
-                            <span class="text-success mr-2"><i class="fa fa-arrow-up"></i> 54.8%</span>
+                            <span v-if="item.data[item.data.length - 1] - item.data[item.data.length - 2] < 0" class="text-success mr-2">
+                              <i class="fa fa-arrow-up"></i>{{item.data[item.data.length - 2] - item.data[item.data.length - 1]}}</span>
+                            <span v-else-if="item.data[item.data.length - 1] - item.data[item.data.length - 2] > 0" class="text-danger mr-2">
+                              <i class="fa fa-arrow-down"></i>{{item.data[item.data.length - 1] - item.data[item.data.length - 2]}}</span>
+                            <span v-else class="mr-2">
+                              0</span>
                             <span class="text-nowrap">Since last month</span>
                         </template>
                     </stats-card>
@@ -66,31 +28,22 @@
         <!--Charts-->
         <div class="container-fluid mt--7">
             <div class="row">
-                <div class="col-xl-8 mb-5 mb-xl-0">
+                <div class="col-xl-12 mb-5 mb-xl-0">
                     <card type="default" header-classes="bg-transparent">
                         <div slot="header" class="row align-items-center">
                             <div class="col">
                                 <h6 class="text-light text-uppercase ls-1 mb-1">Overview</h6>
-                                <h5 class="h3 text-white mb-0">Sales value</h5>
+                                <h5 class="h3 text-white mb-0">Performance</h5>
                             </div>
                             <div class="col">
                                 <ul class="nav nav-pills justify-content-end">
-                                    <li class="nav-item mr-2 mr-md-0">
+                                    <li v-for="(item, index) in performance.latest.datasets.details" class="nav-item mr-2 mr-md-0" :key="index">
                                         <a class="nav-link py-2 px-3"
                                            href="#"
-                                           :class="{active: bigLineChart.activeIndex === 0}"
-                                           @click.prevent="initBigChart(0)">
-                                            <span class="d-none d-md-block">Month</span>
-                                            <span class="d-md-none">M</span>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link py-2 px-3"
-                                           href="#"
-                                           :class="{active: bigLineChart.activeIndex === 1}"
-                                           @click.prevent="initBigChart(1)">
-                                            <span class="d-none d-md-block">Week</span>
-                                            <span class="d-md-none">W</span>
+                                           :class="{active: bigLineChart.activeIndex === index}"
+                                           @click.prevent="initBigChart(index)">
+                                            <span class="d-none d-md-block">{{item.label}}</span>
+                                            <span class="d-md-none">{{item.label[0]}}</span>
                                         </a>
                                     </li>
                                 </ul>
@@ -103,25 +56,6 @@
                                 :extra-options="bigLineChart.extraOptions"
                         >
                         </line-chart>
-
-                    </card>
-                </div>
-
-                <div class="col-xl-4">
-                    <card header-classes="bg-transparent">
-                        <div slot="header" class="row align-items-center">
-                            <div class="col">
-                                <h6 class="text-uppercase text-muted ls-1 mb-1">Performance</h6>
-                                <h5 class="h3 mb-0">Total orders</h5>
-                            </div>
-                        </div>
-
-                        <bar-chart
-                                :height="350"
-                                ref="barChart"
-                                :chart-data="redBarChart.chartData"
-                        >
-                        </bar-chart>
                     </card>
                 </div>
             </div>
@@ -129,11 +63,11 @@
 
             <!--Tables-->
             <div class="row mt-5">
-                <div class="col-xl-8 mb-5 mb-xl-0">
-                    <page-visits-table></page-visits-table>
-                </div>
-                <div class="col-xl-4">
-                    <social-traffic-table></social-traffic-table>
+                <div v-for="(item, index) in performance.latest.datasets.details" :key="index" class="col-xl-12 mb-5 mb-xl-5">
+                    <social-traffic-table
+                      :performanceData="item"
+                      :key="index"
+                    ></social-traffic-table>
                 </div>
             </div>
             <!--End tables-->
@@ -145,26 +79,19 @@
   // Charts
   import * as chartConfigs from '@/components/Charts/config';
   import LineChart from '@/components/Charts/LineChart';
-  import BarChart from '@/components/Charts/BarChart';
 
   // Tables
   import SocialTrafficTable from './Dashboard/SocialTrafficTable';
-  import PageVisitsTable from './Dashboard/PageVisitsTable';
 
   export default {
     components: {
       LineChart,
-      BarChart,
-      PageVisitsTable,
       SocialTrafficTable,
     },
     data() {
       return {
         bigLineChart: {
-          allData: [
-            [0, 20, 10, 30, 15, 40, 20, 60, 60],
-            [0, 20, 5, 25, 10, 30, 15, 40, 40]
-          ],
+          allData: [],
           activeIndex: 0,
           chartData: {
             datasets: [],
@@ -172,13 +99,69 @@
           },
           extraOptions: chartConfigs.blueChartOptions,
         },
-        redBarChart: {
-          chartData: {
-            labels: ['Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-            datasets: [{
-              label: 'Sales',
-              data: [25, 20, 30, 22, 17, 29]
-            }]
+
+        // Dummy User Performance
+        performance: {
+          labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+          latest: {
+            datasets: {
+              details: [
+                {
+                  label: 'Power',
+                  data: [
+                    {
+                      name: 'Jump',
+                      score: [30, 31, 33, 30, 35, 42, 50, 60, 75, 88, 92, 95]
+                    },
+                    {
+                      name: 'Strike',
+                      score: [20, 25, 26, 30, 35, 45, 52, 60, 75, 88, 92, 98]
+                    }
+                  ],
+                  average: [25, 28, 29.5, 30, 35, 43, 51, 60, 75, 88, 92, 96]
+                },
+                {
+                  label: 'Flexibility',
+                  data: [
+                    {
+                      name: 'Shoulder',
+                      score: [30, 31, 33, 30, 35, 42, 50, 60, 75, 80, 85, 88],
+                      
+                    },
+                    {
+                      name: 'Waist',
+                      score: [20, 25, 26, 30, 35, 45, 52, 60, 75, 88, 92, 85]
+                    },
+                    {
+                      name: 'Leg',
+                      score: [25, 28, 29.5, 30, 35, 43, 51, 60, 75, 78, 77, 72]
+                    }
+                  ],
+                  average: [25, 28, 29.5, 30, 35, 43, 51, 60, 75, 88, 92, 82]
+                }
+              ],
+              rank: [
+                {
+                  label: 'Overall Rank',
+                  icon: 'ni ni-active-40',
+                  color: 'gradient-blue',
+                  data: [9, 8, 11, 11, 8, 6, 6, 6, 3, 2, 2, 5]
+                
+                },
+                {
+                  label: 'Power Rank',
+                  icon: 'ni ni-active-40',
+                  color: 'gradient-red',
+                  data: [10, 8, 11, 12, 7, 6, 5, 4, 3, 2, 1, 1]
+                },
+                {
+                  label: 'Flexibility Rank',
+                  icon: 'ni ni-money-coins',
+                  color: 'gradient-green',
+                  data: [8, 8, 10, 9, 7, 8, 5, 7, 3, 2, 2, 6]
+                }
+              ]
+            }
           }
         }
       };
@@ -188,11 +171,11 @@
         let chartData = {
           datasets: [
             {
-              label: 'Performance',
-              data: this.bigLineChart.allData[index]
+              label: this.performance.latest.datasets.details[index].label,
+              data: this.performance.latest.datasets.details[index].average
             }
           ],
-          labels: ['May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+          labels: this.performance.labels,
         };
         this.bigLineChart.chartData = chartData;
         this.bigLineChart.activeIndex = index;
