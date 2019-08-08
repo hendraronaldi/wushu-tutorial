@@ -1,6 +1,7 @@
 <template>
     <div>
         <base-header type="gradient-dark" class="pb-6 pb-8 pt-5 pt-md-8">
+            <h2 class="text-white">Rank</h2>
             <!-- Card stats -->
             <div class="row">
                 <div :key="index" v-for="(item, index) in performance.latest.datasets.rank" class="col-xl-3 col-lg-6 mb-3 mb-xl-5">
@@ -142,20 +143,20 @@
               ],
               rank: [
                 {
-                  label: 'Overall Rank',
+                  label: 'Overall',
                   icon: 'ni ni-active-40',
                   color: 'gradient-blue',
                   data: [9, 8, 11, 11, 8, 6, 6, 6, 3, 2, 2, 5]
                 
                 },
                 {
-                  label: 'Power Rank',
+                  label: 'Power',
                   icon: 'ni ni-active-40',
                   color: 'gradient-red',
                   data: [10, 8, 11, 12, 7, 6, 5, 4, 3, 2, 1, 1]
                 },
                 {
-                  label: 'Flexibility Rank',
+                  label: 'Flexibility',
                   icon: 'ni ni-money-coins',
                   color: 'gradient-green',
                   data: [8, 8, 10, 9, 7, 8, 5, 7, 3, 2, 2, 6]
