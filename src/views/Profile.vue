@@ -26,9 +26,16 @@
                             <div class="row justify-content-center">
                                 <div class="col-lg-3 order-lg-2">
                                     <div class="card-profile-image">
-                                        <a href="#">
-                                            <img src="img/theme/team-1-800x800.jpg" class="rounded-circle">
-                                        </a>
+                                        <image-input v-model="avatar">
+                                            <div slot="activator">
+                                                <div v-if="!avatar">
+                                                    <img src="img/theme/default-profile.jpg" class="rounded-circle">
+                                                </div>
+                                                <div v-else>
+                                                    <img :src="avatar.imageURL" alt="avatar" class="rounded-circle">
+                                                </div>
+                                            </div>
+                                        </image-input>
                                     </div>
                                 </div>
                             </div>
@@ -264,12 +271,18 @@
 import {mapActions, mapGetters, mapState} from 'vuex';
 import flatPicker from "vue-flatpickr-component";
 import "flatpickr/dist/flatpickr.css";
-import { constants } from 'crypto';
+import ImageInput from "../components/ImageUpload.vue";
 
 export default {
-    components: {flatPicker},
+    components: {
+        flatPicker,
+        ImageInput
+    },
     data(){
         return {
+            avatar: null,
+            saving: false,
+            saved: false,
             success: false,
             fail: false,
             isEditProfile: false,
@@ -300,6 +313,14 @@ export default {
         ...mapState([
             'userProfile'
         ])
+    },
+    watch:{
+        avatar: {
+            handler: function() {
+                this.saved = false
+            },
+            deep: true
+        }
     },
     methods: mapActions({
         toggleEditProfile(){
@@ -354,6 +375,14 @@ export default {
             } else {
                 this.isSavingProfile = false;
             }
+        },
+        uploadImage(dispatch) {
+            this.saving = true
+            setTimeout(() => this.savedAvatar(), 1000)
+        },
+        savedAvatar(dispatch) {
+            this.saving = false
+            this.saved = true
         }
     })
 };
