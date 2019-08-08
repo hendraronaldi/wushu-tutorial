@@ -16,7 +16,8 @@
                         <a slot="title" class="nav-link" href="#" role="button">
                             <div class="media align-items-center">
                               <span class="avatar avatar-sm rounded-circle">
-                                <img alt="Image placeholder" src="img/theme/team-1-800x800.jpg">
+                                <img v-if="loggedAs.Avatar" alt="Image placeholder" :src="loggedAs.Avatar">
+                                <img v-else alt="Image placeholder" src="img/theme/default-profile.jpg">
                               </span>
                             </div>
                         </a>
@@ -25,7 +26,7 @@
                             <h6 class="text-overflow m-0">Welcome!</h6>
                         </div>
                         <div class="dropdown-divider"></div>
-                        <button v-if="loggedAs == 'Admin'" @click="adminLogout" class="dropdown-item">
+                        <button v-if="loggedAs.Name == 'Admin'" @click="adminLogout" class="dropdown-item">
                             <i class="ni ni-user-run"></i>
                             <span>Logout</span>
                         </button>
@@ -70,7 +71,7 @@
       NavbarToggleButton
     },
     props: {
-      loggedAs: String,
+      loggedAs: Object,
       logo: {
         type: String,
         default: 'img/brand/logoTP.jpg',

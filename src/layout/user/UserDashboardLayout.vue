@@ -42,7 +42,7 @@
     },
     data() {
       return {
-        loggedAs: this.$store.state.userProfile.Name,
+        loggedAs: this.$store.state.userProfile,
         sidebarBackground: 'vue' //vue|blue|orange|green|red|primary
       };
     },

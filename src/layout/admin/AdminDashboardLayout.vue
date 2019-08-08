@@ -41,7 +41,9 @@
     },
     data() {
       return {
-        loggedAs: 'Admin',
+        loggedAs: {
+          Name: 'Admin'
+        },
         sidebarBackground: 'vue' //vue|blue|orange|green|red|primary
       };
     },
