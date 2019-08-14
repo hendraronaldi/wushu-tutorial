@@ -9,6 +9,7 @@ Vue.use(Vuex)
 const state = {
     userProfile: JSON.parse(localStorage.getItem("userProfile")) || null,
     admin: JSON.parse(localStorage.getItem("admin")) || null,
+    userPerformance: null,
     currentCategory: null,
     currentLevel: null,
     currentCourse: null

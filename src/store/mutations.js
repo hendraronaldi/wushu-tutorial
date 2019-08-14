@@ -35,6 +35,18 @@ export default {
 
     getCourseDetails(state, course) {
         getCourseDetails(state, course);
+    },
+
+    getUserPerformance(state, performance) {
+        getUserPerformance(state, performance);
+    },
+
+    postUserPerformance(state, performance) {
+        postUserPerformance(state, performance);
+    },
+
+    getPerformances(state, performance) {
+        getPerformances(state, performance);
     }
 }
 
@@ -78,4 +90,16 @@ function getCourseLevels(state, level) {
 
 function getCourseDetails(state, course) {
     Vue.set(state, 'currentCourse', course);
+}
+
+function getUserPerformance(state, performance) {
+    Vue.set(state, 'userPerformance', performance);
+}
+
+function postUserPerformance(state, performance) {
+    Vue.set(state, 'userPerformance', performance);
+}
+
+function getPerformances(state, performance) {
+    Vue.set(state, 'performances', performance);
 }

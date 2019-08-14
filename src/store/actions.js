@@ -121,3 +121,33 @@ export const getCourseDetails = async ({commit}, payload) => {
         return Promise.reject(e)
     }
 }
+
+export const getUserPerformance = async ({commit}, payload) => {
+    try {
+        const response = await axios.get(BASE_URL + "/performance/" + payload)
+        commit('getUserPerformance', response.data);
+        return Promise.resolve(response.data)
+    } catch (e) {
+        return Promise.reject(e)
+    }
+}
+
+export const postUserPerformance = async ({commit}, payload) => {
+    try {
+        const response = await axios.post(BASE_URL + "/performance")
+        commit('postUserPerformance', response.data);
+        return Promise.resolve(response.data)
+    } catch (e) {
+        return Promise.reject(e)
+    }
+}
+
+export const getPerformances = async ({commit}) => {
+    try {
+        const response = await axios.get(BASE_URL + "/performance")
+        commit('getPerformances', response.data);
+        return Promise.resolve(response.data)
+    } catch (e) {
+        return Promise.reject(e)
+    }
+}
