@@ -77,6 +77,7 @@
     </div>
 </template>
 <script>
+  import {mapActions, mapGetters, mapState} from 'vuex';
   // Charts
   import * as chartConfigs from '@/components/Charts/config';
   import LineChart from '@/components/Charts/LineChart';
@@ -89,6 +90,17 @@
       LineChart,
       SocialTrafficTable,
     },
+    created(){
+      this.getUserPerformance();
+    },
+    computed: {
+        ...mapGetters([
+            'currentUser'
+        ]),
+        ...mapState([
+            'userProfile'
+        ])
+    },
     data() {
       return {
         bigLineChart: {
@@ -100,6 +112,8 @@
           },
           extraOptions: chartConfigs.blueChartOptions,
         },
+
+        userPerformance: [],
 
         // Dummy User Performance
         performance: {
@@ -167,21 +181,34 @@
         }
       };
     },
-    methods: {
-      initBigChart(index) {
-        let chartData = {
-          datasets: [
-            {
-              label: this.performance.latest.datasets.details[index].label,
-              data: this.performance.latest.datasets.details[index].average
-            }
-          ],
-          labels: this.performance.labels,
-        };
-        this.bigLineChart.chartData = chartData;
-        this.bigLineChart.activeIndex = index;
+    methods: mapActions(
+      {
+        initBigChart(dispatch, index) {
+          let chartData = {
+            datasets: [
+              {
+                label: this.performance.latest.datasets.details[index].label,
+                data: this.performance.latest.datasets.details[index].average
+              }
+            ],
+            labels: this.performance.labels,
+          };
+          this.bigLineChart.chartData = chartData;
+          this.bigLineChart.activeIndex = index;
+        },
+
+        getUserPerformance(dispatch){
+          dispatch('getUserPerformance', this.$store.state.userProfile.Email)
+          .then((response) => {
+              this.userPerformance = response;
+              console.log(this.userPerformance);
+          })
+          .catch(() => {
+              this.userPerformance = [];
+          })
+        }
       }
-    },
+    ),
     mounted() {
       this.initBigChart(0);
     }
