@@ -10,6 +10,7 @@
         
         <!-- <sidebar-item :link="{name: 'Courses', icon: 'ni ni-hat-3 text-success', path: '/courses'}"/> -->
         <sidebar-item :link="{name: 'Users', icon: 'ni ni-circle-08 text-info', path: '/admin-confirmation'}"/>
+        <sidebar-item :link="{name: 'Performances', icon: 'ni ni-tv-2 text-primary', path: '/user-performance'}"/>
 
       </template>
     </side-bar>
