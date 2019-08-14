@@ -101,7 +101,7 @@ export default {
             this.isFetching = true;
             dispatch('login', {user})
             .then((response) => {
-                this.$router.push("/profile")
+                this.$router.push("/dashboard")
             })
             .catch(error => {
                 this.fail = true;
