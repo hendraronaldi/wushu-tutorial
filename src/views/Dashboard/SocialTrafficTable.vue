@@ -3,14 +3,14 @@
     <div class="card-header border-0">
       <div class="row align-items-center">
         <div class="col">
-          <h3 class="mb-0">{{performanceData.label}}</h3>
+          <h3 class="mb-0">{{title}}</h3>
         </div>
       </div>
     </div>
 
     <div class="table-responsive">
       <base-table thead-classes="thead-light"
-                  :data="performanceData.data">
+                  :data="data">
         <template slot="columns">
           <th>Details</th>
           <th>Score</th>
@@ -32,12 +32,12 @@
               </div>
             </td>
             <td>
-                <span v-if="row.score[row.score.length - 1] - row.score[row.score.length - 2] < 0" class="text-danger mr-2">
-                  <i class="fa fa-arrow-down"></i>{{row.score[row.score.length - 2] - row.score[row.score.length - 1]}}</span>
-                <span v-else-if="row.score[row.score.length - 1] - row.score[row.score.length - 2] > 0" class="text-success mr-2">
-                  <i class="fa fa-arrow-up"></i>{{row.score[row.score.length - 1] - row.score[row.score.length - 2]}}</span>
-                <span v-else class="mr-2">0</span>
-                <span class="text-nowrap">Since last month</span>
+              <span v-if="row.score[row.score.length - 1] - row.score[row.score.length - 2] < 0 && row.score.length > 1" class="text-danger mr-2">
+                <i class="fa fa-arrow-down"></i>{{row.score[row.score.length - 2] - row.score[row.score.length - 1]}}</span>
+              <span v-else-if="row.score[row.score.length - 1] - row.score[row.score.length - 2] > 0 && row.score.length > 1" class="text-success mr-2">
+                <i class="fa fa-arrow-up"></i>{{row.score[row.score.length - 1] - row.score[row.score.length - 2]}}</span>
+              <span v-else class="mr-2">0</span>
+              <span class="text-nowrap">Since last month</span>
             </td>
         </template>
 
@@ -50,9 +50,30 @@
   export default {
     name: 'social-traffic-table',
     props: {
-      performanceData: Object
+      performanceData: Object,
+      title: String,
     },
-
+    created(){
+      this.performanceDataToArray()
+    },
+    data() {
+      return {
+        data: []
+      }
+    },
+    methods: {
+      performanceDataToArray() {
+        var keys = Object.keys(this.performanceData);
+        for(var i = 0; i < keys.length; i++){
+          if(keys[i] != "average"){
+            this.data.push({
+              name: keys[i],
+              score: this.performanceData[keys[i]]
+            })
+          }
+        }
+      }
+    }
   }
 </script>
 <style>
