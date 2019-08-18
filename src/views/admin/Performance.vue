@@ -9,7 +9,7 @@
                 {{activeUser.Name}}
               </base-button>
               <div :key="index" v-for="(user, index) in users">
-                <a @click="getUserPerformance(user)" class="dropdown-item" href="#">{{user.Name}}</a>
+                <a @click="getUserPerformance(user)" class="dropdown-item">{{user.Name}}</a>
               </div>
             </base-dropdown>
             <div v-show="Object.keys(this.userPerformance).length > 0">
@@ -54,7 +54,6 @@
                                 <ul class="nav nav-pills justify-content-end">
                                     <li v-for="(item, index) in Object.keys(userPerformance)" class="nav-item mr-2 mr-md-0" :key="index">
                                         <a class="nav-link py-2 px-3"
-                                           href="#"
                                            v-if="item != 'email' && item != 'dates'"
                                            :class="{active: bigLineChart.activeIndex === item}"
                                            @click.prevent="initBigChart(item)">
@@ -195,7 +194,6 @@
             })
           })
           .catch(() => {
-            this.activeUser = null;
             this.userPerformance = {};
           })
           .then(() => {
@@ -204,7 +202,7 @@
         },
 
         getUsers(dispatch) {
-          dispatch('getAllUsers')
+          dispatch('getUsersByStatus', 'verified')
           .then((response) => {
               this.users = response;
           })
