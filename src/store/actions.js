@@ -74,6 +74,15 @@ export const getAllUsers = async ({commit}) => {
     }
 }
 
+export const getUsersByStatus = async ({commit}, payload) => {
+    try {
+        const response = await axios.get(BASE_URL + "/users/" + payload)
+        return Promise.resolve(response.data)
+    } catch (e) {
+        return Promise.reject(e)
+    }
+}
+
 export const validateUser = async ({commit}, payload) => {
     try {
         const response = await axios.post(BASE_URL + "/validate", payload.targetedUser)

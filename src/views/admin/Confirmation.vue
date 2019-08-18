@@ -135,16 +135,7 @@ import {mapActions, mapGetters, mapState} from 'vuex';
 
 export default {
     created() {
-        this.$store.dispatch('getAllUsers')
-        .then((response) => {
-            this.users = response;
-        })
-        .catch(error => {
-            this.users = [];
-        })
-        .finally(() => {
-            this.isFetchingUsers = false;
-        })
+        this.getUsersByStatus();
     },
 
     data(){
@@ -161,8 +152,22 @@ export default {
     },
 
     methods: mapActions({
+        getUsersByStatus(dispatch) {
+            dispatch('getUsersByStatus', this.category[this.activeCategory])
+            .then((response) => {
+                this.users = response;
+            })
+            .catch(error => {
+                this.users = [];
+            })
+            .finally(() => {
+                this.isFetchingUsers = false;
+            })
+        },
+
         toggleCategory(dispatch, index) {
             this.activeCategory = index;
+            this.getUsersByStatus();
         },
 
         toggleUserDetails(dispatch, user) {
@@ -183,8 +188,9 @@ export default {
             dispatch('validateUser', {targetedUser})
             .then((response) => {
                 alert("User is validated")
-                this.users = this.users.filter(user => user.Username != response.Username);
-                this.users.push(response);
+                // this.users = this.users.filter(user => user.Username != response.Username);
+                // this.users.push(response);
+                this.getUsersByStatus();
             })
             .catch(error => {
                 alert("Oops, something wrong! Please try again")
@@ -201,8 +207,9 @@ export default {
             dispatch('rejectUser', {targetedUser})
             .then((response) => {
                 alert("User is rejected")
-                this.users = this.users.filter(user => user.Username != response.Username);
-                this.users.push(response);
+                // this.users = this.users.filter(user => user.Username != response.Username);
+                // this.users.push(response);
+                this.getUsersByStatus()
             })
             .catch(error => {
                 alert("Oops, something wrong! Please try again")
