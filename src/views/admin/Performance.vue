@@ -12,6 +12,45 @@
                 <a @click="getUserPerformance(user)" class="dropdown-item">{{user.Name}}</a>
               </div>
             </base-dropdown>
+
+            <span>
+              <base-button v-show="activeUser && !isAssessedCurrentMonth" @click="showModal = true" type="primary">
+                Make assessment
+              </base-button>
+              <div>
+                <modal :show.sync="showModal"
+                  body-classes="p-0"
+                  modal-classes="modal-dialog-centered modal-sm"
+                >
+                  <card type="secondary" shadow
+                        header-classes="bg-white pb-5"
+                        body-classes="px-lg-5 py-lg-5"
+                        class="border-0">
+                      <template>
+                          <form role="form">
+                            <div class="text-center text-muted mb-4">
+                              <small>Flexibility</small>
+                            </div>
+                              <base-input alternative
+                                          class="mb-3"
+                                          placeholder="Email"
+                                          addon-left-icon="ni ni-email-83">
+                              </base-input>
+                              <base-input alternative
+                                          type="password"
+                                          placeholder="Password"
+                                          addon-left-icon="ni ni-lock-circle-open">
+                              </base-input>
+                              <div class="text-center">
+                                  <base-button type="primary" class="my-4">Sign In</base-button>
+                              </div>
+                          </form>
+                      </template>
+                  </card>
+                </modal>
+              </div>
+            </span>
+            
             <div v-show="Object.keys(this.userPerformance).length > 0">
               <h2 class="text-white">Rank</h2>
               <!-- Card stats -->
@@ -79,8 +118,8 @@
                                 <h5 class="h3 text-white mb-0">Performance</h5>
                             </div>
                         </div>
-                        <div class="row">
-                          <h5 class="text-center">No Data</h5>
+                        <div class="row align-items-center">
+                          <h5 class="h3 text-white text-center text-uppercase ls-1 mb-1">No Data</h5>
                         </div>
                     </card>
                 </div>
@@ -118,6 +157,7 @@
       SocialTrafficTable,
     },
     created(){
+      this.getCurrentMonth();
       this.getUsers();
     },
     data() {
@@ -135,8 +175,11 @@
           extraOptions: chartConfigs.blueChartOptions,
         },
         months: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+        currentMonth: '',
 
         userPerformance: {},
+        showModal: false,
+        isAssessedCurrentMonth: true,
 
         // Dummy User Performance
         performance: {
@@ -169,6 +212,11 @@
     },
     methods: mapActions(
       {
+        getCurrentMonth(dispatch) {
+          var date = new Date();
+          this.currentMonth = this.months[date.getMonth()];
+        },
+
         initBigChart(dispatch, key) {
           let chartData = {
             datasets: [
@@ -184,7 +232,9 @@
         },
 
         getUserPerformance(dispatch, user){
-          this.activeUser = user
+          this.activeUser = user;
+          this.isAssessedCurrentMonth = true;
+          
           dispatch('getUserPerformance', this.activeUser.Email)
           .then((response) => {
             this.userPerformance = response;
@@ -192,9 +242,16 @@
             response.dates.forEach((element, i) => {
               this.userPerformance.dates[i] = this.months[parseInt(element.substr(5, 3), 10) - 1]
             })
+
+            if(this.userPerformance.dates[this.userPerformance.dates.length - 1] == this.currentMonth){
+              this.isAssessedCurrentMonth = true;
+            }else{
+              this.isAssessedCurrentMonth = false;
+            }
           })
           .catch(() => {
             this.userPerformance = {};
+            this.isAssessedCurrentMonth = false;
           })
           .then(() => {
             this.initBigChart("flexibility");
