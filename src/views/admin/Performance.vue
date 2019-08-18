@@ -1,6 +1,8 @@
 <template>
     <div>
         <base-header type="gradient-dark" class="pb-6 pb-8 pt-5 pt-md-8">
+
+            <!-- Select User -->
             <base-dropdown class="mb-3 mb-xl-5">
               <base-button v-if="!activeUser" slot="title" type="info" class="dropdown-toggle">
                 -- Select User --
@@ -13,6 +15,7 @@
               </div>
             </base-dropdown>
 
+            <!-- Modal Form Assessment -->
             <span>
               <base-button v-show="activeUser && !isAssessedCurrentMonth" @click="showModal = true" type="primary">
                 Make assessment
@@ -28,21 +31,20 @@
                         class="border-0">
                       <template>
                           <form role="form">
-                            <div class="text-center text-muted mb-4">
-                              <small>Flexibility</small>
+                            <div :key="index" v-for="(val, category, index) in newUserPerformance">
+                              <div v-if="category != 'email' && category != 'date'" class="text-center text-muted mb-4">
+                                <small>{{category.toUpperCase()}}</small>
+                              </div>
+                              <div v-if="category != 'email' && category != 'date'" :key="idx" v-for="(value, item, idx) in newUserPerformance[category]" class="form-group mb-3 input-group input-group-alternative">
+                                  <input v-model="newUserPerformance[category][item]" type="number" min="0" max="100" step="1" :placeholder="item" class="form-control">
+                              </div>
                             </div>
-                              <base-input alternative
-                                          class="mb-3"
-                                          placeholder="Email"
-                                          addon-left-icon="ni ni-email-83">
-                              </base-input>
-                              <base-input alternative
-                                          type="password"
-                                          placeholder="Password"
-                                          addon-left-icon="ni ni-lock-circle-open">
-                              </base-input>
+                              <base-checkbox v-model="isAssessmentVerified">
+                                  Verify Assessment
+                              </base-checkbox>
                               <div class="text-center">
-                                  <base-button type="primary" class="my-4">Sign In</base-button>
+                                  <base-button @click="postUserPerformance()" v-if="isAssessmentVerified" type="primary" class="my-4">Submit</base-button>
+                                  <base-button v-else type="primary" class="my-4" disabled>Submit</base-button>
                               </div>
                           </form>
                       </template>
@@ -51,6 +53,7 @@
               </div>
             </span>
             
+            <!-- Ranking Progress -->
             <div v-show="Object.keys(this.userPerformance).length > 0">
               <h2 class="text-white">Rank</h2>
               <!-- Card stats -->
@@ -79,7 +82,7 @@
             
         </base-header>
 
-        <!--Charts-->
+        <!--Charts Performance-->
         <div class="container-fluid mt--7">
             <div class="row">
                 <div class="col-xl-12 mb-5 mb-xl-0">
@@ -126,7 +129,7 @@
             </div>
             <!-- End charts-->
 
-            <!--Tables-->
+            <!--Tables Performance-->
             <div class="row mt-5">
                 <div v-for="(item, key) in userPerformance" :key="key" class="col-xl-12 mb-5 mb-xl-5">
                     <social-traffic-table
@@ -144,6 +147,8 @@
 </template>
 <script>
   import {mapActions, mapGetters, mapState} from 'vuex';
+  import {userPerformanceData} from '../../api/performance/performance';
+
   // Charts
   import * as chartConfigs from '@/components/Charts/config';
   import LineChart from '@/components/Charts/LineChart';
@@ -177,6 +182,9 @@
         months: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
         currentMonth: '',
 
+        newUserPerformance: userPerformanceData,
+        isAssessmentVerified: false,
+
         userPerformance: {},
         showModal: false,
         isAssessedCurrentMonth: true,
@@ -191,7 +199,6 @@
                 icon: 'ni ni-active-40',
                 color: 'gradient-blue',
                 data: [9, 8, 11, 11, 8, 6, 6, 6, 3, 2, 2, 5]
-              
               },
               {
                 label: 'Power',
@@ -234,7 +241,7 @@
         getUserPerformance(dispatch, user){
           this.activeUser = user;
           this.isAssessedCurrentMonth = true;
-          
+
           dispatch('getUserPerformance', this.activeUser.Email)
           .then((response) => {
             this.userPerformance = response;
@@ -255,6 +262,36 @@
           })
           .then(() => {
             this.initBigChart("flexibility");
+          })
+        },
+
+        postUserPerformance(dispatch) {
+          this.newUserPerformance.email = this.activeUser.Email;
+
+          var d = new Date(),
+          month = '' + (d.getMonth() + 1),
+          day = '' + d.getDate(),
+          year = d.getFullYear();
+
+          if (month.length < 2) month = '0' + month;
+          if (day.length < 2) day = '0' + day;
+
+          this.newUserPerformance.date = [year, month, day].join('-');
+          
+
+          dispatch('postUserPerformance', this.newUserPerformance)
+          .then((response) => {
+            alert("User performance saved successfully");
+            this.showModal = false;
+            this.isAssessmentVerified = false;
+            this.isAssessedCurrentMonth = true;
+          })
+          .catch(() => {
+            alert("Fail to save assessment data");
+          })
+          .then(() => {
+            this.newUserPerformance = userPerformanceData;
+            this.getUserPerformance(this.activeUser);
           })
         },
 
