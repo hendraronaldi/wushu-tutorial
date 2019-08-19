@@ -121,9 +121,6 @@
                                 <h5 class="h3 text-white mb-0">Performance</h5>
                             </div>
                         </div>
-                        <div class="row align-items-center">
-                          <h5 class="h3 text-white text-center text-uppercase ls-1 mb-1">No Data</h5>
-                        </div>
                     </card>
                 </div>
             </div>
