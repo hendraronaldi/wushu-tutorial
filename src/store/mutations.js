@@ -97,7 +97,7 @@ function getUserPerformance(state, performance) {
 }
 
 function postUserPerformance(state, performance) {
-    Vue.set(state, 'userPerformance', performance);
+    // Vue.set(state, 'userPerformance', performance);
 }
 
 function getPerformances(state, performance) {

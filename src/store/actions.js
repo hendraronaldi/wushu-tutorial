@@ -143,7 +143,7 @@ export const getUserPerformance = async ({commit}, payload) => {
 
 export const postUserPerformance = async ({commit}, payload) => {
     try {
-        const response = await axios.post(BASE_URL + "/performance")
+        const response = await axios.post(BASE_URL + "/performance", payload)
         commit('postUserPerformance', response.data);
         return Promise.resolve(response.data)
     } catch (e) {

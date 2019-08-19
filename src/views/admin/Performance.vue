@@ -36,7 +36,7 @@
                                 <small>{{category.toUpperCase()}}</small>
                               </div>
                               <div v-if="category != 'email' && category != 'date'" :key="idx" v-for="(value, item, idx) in newUserPerformance[category]" class="form-group mb-3 input-group input-group-alternative">
-                                  <input v-model="newUserPerformance[category][item]" type="number" min="0" max="100" step="1" :placeholder="item" class="form-control">
+                                  <input v-model.number="newUserPerformance[category][item]" type="number" min="0" max="100" step="1" :placeholder="item" class="form-control">
                               </div>
                             </div>
                               <base-checkbox v-model="isAssessmentVerified">
@@ -162,6 +162,15 @@
       SocialTrafficTable,
     },
     created(){
+      var d = new Date(),
+      month = '' + (d.getMonth() + 1),
+      day = '' + d.getDate(),
+      year = d.getFullYear();
+
+      if (month.length < 2) month = '0' + month;
+      if (day.length < 2) day = '0' + day;
+
+      this.newUserPerformance.date = [year, month, day].join('-');
       this.getCurrentMonth();
       this.getUsers();
     },
@@ -240,6 +249,7 @@
 
         getUserPerformance(dispatch, user){
           this.activeUser = user;
+          this.newUserPerformance.email = this.activeUser.Email;
           this.isAssessedCurrentMonth = true;
 
           dispatch('getUserPerformance', this.activeUser.Email)
@@ -266,32 +276,17 @@
         },
 
         postUserPerformance(dispatch) {
-          this.newUserPerformance.email = this.activeUser.Email;
-
-          var d = new Date(),
-          month = '' + (d.getMonth() + 1),
-          day = '' + d.getDate(),
-          year = d.getFullYear();
-
-          if (month.length < 2) month = '0' + month;
-          if (day.length < 2) day = '0' + day;
-
-          this.newUserPerformance.date = [year, month, day].join('-');
-          
-
           dispatch('postUserPerformance', this.newUserPerformance)
           .then((response) => {
             alert("User performance saved successfully");
             this.showModal = false;
             this.isAssessmentVerified = false;
             this.isAssessedCurrentMonth = true;
-          })
-          .catch(() => {
-            alert("Fail to save assessment data");
-          })
-          .then(() => {
             this.newUserPerformance = userPerformanceData;
             this.getUserPerformance(this.activeUser);
+          })
+          .catch((e) => {
+            alert("Fail to save assessment data");
           })
         },
 
