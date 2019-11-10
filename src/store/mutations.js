@@ -47,6 +47,14 @@ export default {
 
     getPerformances(state, performance) {
         getPerformances(state, performance);
+    },
+
+    getLineBotQR(state) {
+        getLineBotQR(state);
+    },
+
+    postUserPaymentConfirmation(state, payment) {
+        postUserPaymentConfirmation(state, payment);
     }
 }
 
@@ -102,4 +110,12 @@ function postUserPerformance(state, performance) {
 
 function getPerformances(state, performance) {
     Vue.set(state, 'performances', performance);
+}
+
+function getLineBotQR(state) {
+
+}
+
+function postUserPaymentConfirmation(state, payment) {
+
 }
