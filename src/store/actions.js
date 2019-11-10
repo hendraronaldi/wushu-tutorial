@@ -160,3 +160,31 @@ export const getPerformances = async ({commit}) => {
         return Promise.reject(e)
     }
 }
+
+export const getLineBotQR = async ({commit}) => {
+    try {
+        const response = await axios.get(BASE_URL + "/linebot")
+        commit('getLineBotQR', response.data);
+        return Promise.resolve(response.data)
+    } catch (e) {
+        return Promise.reject(e)
+    }
+}
+
+export const postUserPaymentConfirmation = async ({commit}, payload) => {
+    try {
+        const response = await axios.post(
+            BASE_URL + "/payment-confirmation",
+            payload,
+            {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            }
+        )
+        commit('postUserPaymentConfirmation', response.data);
+        return Promise.resolve(response.data)
+    } catch (e) {
+        return Promise.reject(e)
+    }
+}
