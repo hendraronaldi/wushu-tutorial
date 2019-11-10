@@ -77,7 +77,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-xl-8 order-xl-1">
+                    <div class="col-xl-8 order-xl-1 mb-5 mb-xl-0">
                         <div class="card shadow bg-secondary">
                             <div class="card-header">
                                 <div class="border-0">
@@ -262,6 +262,87 @@
                             </div>
                         </div>
                     </div>
+                    <div class="col-xl-8 order-xl-1">
+                        <div class="card shadow bg-secondary">
+                            <div class="card-header">
+                                <div class="border-0">
+                                    <div class="row align-items-center">
+                                        <div class="col-8">
+                                            <h3 class="mb-0">Payment Confirmation</h3>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <h3>Website</h3>
+                                    </div>
+                                </div>
+                                <form role="form" @submit="uploadPaymentConfirmation">
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                            <div class="form-group has-label">
+                                                <label class="form-control-label">
+                                                    Month & Year Payment
+                                                </label>
+                                                <base-input alternative>
+                                                    <flat-picker slot-scope="{focus, blur}"
+                                                                @on-open="focus"
+                                                                @on-close="blur"
+                                                                :config="{allowInput: true}"
+                                                                class="form-control datepicker"
+                                                                v-model="paymentMonthYear">
+                                                    </flat-picker>
+                                                </base-input>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <div class="form-group has-label">
+                                                <label class="form-control-label">
+                                                    Proof of Payment
+                                                </label>
+                                                <div class="col">
+                                                    <input type="file" style="display: none" accept="image/*" @change="onFileSelected" ref="inputImage" required>
+                                                    <base-button @click="$refs.inputImage.click()" type="info">Select Image</base-button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div v-if="paymentConfirmation" class="row">
+                                            <div class="col-lg-6">
+                                                <div class="col">
+                                                    <img :src="paymentConfirmation" alt=""
+                                                    style="height:auto; max-width: 200px;">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                            <button type="submit" class="btn my-4 btn-primary" :disabled="!(paymentMonthYear && paymentConfirmation)">Send Proof of Payment</button>
+                                        </div>
+                                    </div>
+                                </form>
+                                <hr class="my-4">
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <h3>Line</h3>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <h5><em>Scan QR Code</em></h5>
+                                        <img :src="linebot" alt=""
+                                        style="height:auto; max-width: 200px;">
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <h5><em>Add Using Line ID</em></h5>
+                                        <h3>@292rsjzg</h3>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -287,8 +368,14 @@ export default {
             fail: false,
             isEditProfile: false,
             isSavingProfile: false,
+            isUploadImage: false,
             newpassword: this.$store.state.userProfile.Password,
             confirmpassword: this.$store.state.userProfile.Password,
+            linebot: '',
+            selectedImage: null,
+            paymentMonthYear: '',
+            paymentConfirmation: null,
+            paymentConfirmationFile: null,
             user: {
                 name: this.$store.state.userProfile.Name,
                 address: this.$store.state.userProfile.Address,
@@ -314,6 +401,11 @@ export default {
             'userProfile'
         ])
     },
+
+    created(){
+        this.getLineBotQR();
+    },
+
     watch:{
         avatar: {
             handler: function() {
@@ -323,6 +415,26 @@ export default {
         }
     },
     methods: mapActions({
+        onFileSelected(dispatch, e){
+            e.preventDefault();
+            if(e.target.files[0].size > 1024 * 1024){
+                alert("File too big, should be under 1 MB")
+            } else {
+                this.paymentConfirmationFile = e.target.files[0];
+                var input = e.target;
+                var reader = new FileReader();
+                if (input.files && input.files[0]) {
+                    reader.onload = (event) => {
+                        // Note: arrow function used here, so that "this.imageData" refers to the imageData of Vue component
+                        // Read image as base64 and set to imageData
+                        this.paymentConfirmation = event.target.result;
+                    }
+                    // Start the reader job - read file as a data url (base64 format)
+                    reader.readAsDataURL(input.files[0]);
+                }
+            }
+        },
+
         toggleEditProfile(){
             this.isEditProfile = !this.isEditProfile;
         },
@@ -383,6 +495,36 @@ export default {
         savedAvatar(dispatch) {
             this.saving = false
             this.saved = true
+        },
+
+        getLineBotQR(dispatch) {
+            dispatch('getLineBotQR')
+            .then((response) => {
+                this.linebot = 'data:image/png;base64, ' + response;
+            })
+            .catch((error) => {
+                this.linebot = '';
+            })
+        },
+
+        uploadPaymentConfirmation(dispatch) {
+          this.isUploadImage = !this.isUploadImage;
+          let formData = new FormData();
+          formData.append('fullname', this.$store.state.userProfile.Name);
+          formData.append('date', this.paymentMonthYear);
+          formData.append('file', this.paymentConfirmation);
+          formData.append('type', this.paymentConfirmationFile.type.split('/')[1]);
+
+          dispatch('postUserPaymentConfirmation', formData)
+          .then(response => {
+            // alert("Payment is sent successfully")
+          })
+          .catch(error => {
+            alert("Fail to send payment confirmation")
+          })
+          .finally(() => {
+            this.isUploadImage = !this.isUploadImage;
+          })
         }
     })
 };
